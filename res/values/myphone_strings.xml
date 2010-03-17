@@ -17,10 +17,11 @@
 		not, see <http://www.gnu.org/licenses/>.
 	-->
 <resources>
-	<string name="app_name">WebSMS Connector: myphone</string>
+	<string name="app_name">WebSMS myphone.ge Connector</string>
 	<string name="app_version">1.0</string>
 	<string name="myphone_author">Lado Kumsiashvili &lt;herrlado@gmail.com&gt;</string>
-	<string name="myphone_name">myphone</string>
-	<string name="preferences">Preferences - myphone</string>
-	<string name="enable">Enable myphone</string>
+	<string name="myphone_name">myphone.ge</string>
+	<string name="preferences">Preferences - myphone.ge</string>
+	<string name="enable">Enable myphone.ge</string>
+	<string name="log_unknow_status_after_send">The Message was probably not be sent. Please contact the Developer!</string>
 </resources>
