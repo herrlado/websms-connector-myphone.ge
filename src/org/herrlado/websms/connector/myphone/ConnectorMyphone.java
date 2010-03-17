@@ -19,7 +19,10 @@
 package org.herrlado.websms.connector.myphone;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,8 +31,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -45,17 +51,20 @@ import de.ub0r.android.websms.connector.common.ConnectorSpec.SubConnectorSpec;
 /**
  * Receives commands coming as broadcast from WebSMS.
  * 
- * @author flx
+ * @author lado
  */
 public class ConnectorMyphone extends Connector {
 	/** Tag for debug output. */
-	private static final String TAG = "WebSMS.myphone";
+	private static final String TAG = "WebSMS.myphone.ge";
 
 	/** Login URL, to send Login (POST). */
 	private static final String LOGIN_URL = "https://myaccount.myphone.ge";
 
 	/** Send SMS URL(POST) / Free SMS Count URL(GET). */
-	private static final String SMS_URL = "https://myaccount.myphone.ge/sms.php";
+	private static final String SMS_URL = "https://myaccount.myphone.ge/ajax/sms/send.php";
+
+	/** Get Balance - > {"balance":"16.28","livesupporturl":"livesupport_on"} **/
+	private static final String BALANCE_URL = "https://myaccount.myphone.ge/ajax/account/getbalance.php";
 
 	/** Encoding to use. */
 	private static final String ENCODING = "UTF-8";
@@ -66,17 +75,18 @@ public class ConnectorMyphone extends Connector {
 			+ " Firefox/3.0.9 (.NET CLR 3.5.30729)";
 
 	/** This String will be matched if the user is logged in. */
-	private static final String MATCH_LOGIN_SUCCESS = "act=logout";
+	private static final String MATCH_LOGIN_SUCCESS = "control_panel_logout";
 
 	/**
 	 * Pattern to extract free sms count from sms page. Looks like.
 	 */
 	private static final Pattern BALANCE_MATCH_PATTERN = Pattern.compile(
-			"<b>(\\d{1,}\\...) GEL</b>", Pattern.DOTALL);
+			"<span id=\"balance\">(.+?)</span>", Pattern.DOTALL);
 
-	// public ConnectorMyphone() {
-	// Log.w(TAG, "ConnectorMyphone");
-	// }
+	private static final String PAGE_ENCODING = "UTF-8";
+	// 16.03.2010 07:10:00
+	private static final SimpleDateFormat format = new SimpleDateFormat(
+			"dd.MM.yyyy HH:mm:ss");
 
 	/**
 	 * {@inheritDoc}
@@ -89,13 +99,22 @@ public class ConnectorMyphone extends Connector {
 				context.getString(R.string.myphone_author));
 		c.setBalance(null);
 		c.setPrefsTitle(context.getString(R.string.preferences));
+
 		c.setCapabilities(ConnectorSpec.CAPABILITIES_UPDATE
 				| ConnectorSpec.CAPABILITIES_SEND
 				| ConnectorSpec.CAPABILITIES_PREFS);
 		c.addSubConnector(TAG, c.getName(),
-				SubConnectorSpec.FEATURE_MULTIRECIPIENTS
-						| SubConnectorSpec.FEATURE_CUSTOMSENDER
-						| SubConnectorSpec.FEATURE_SENDLATER);
+				SubConnectorSpec.FEATURE_CUSTOMSENDER);
+		// | SubConnectorSpec.FEATURE_SENDLATER);//TODO fix me
+		// | SubConnectorSpec.FEATURE_SENDLATER_QUARTERS);
+
+		// c.setCapabilities(ConnectorSpec.CAPABILITIES_UPDATE
+		// | ConnectorSpec.CAPABILITIES_SEND
+		// | ConnectorSpec.CAPABILITIES_PREFS);
+		// c.addSubConnector(TAG, c.getName(),
+		// SubConnectorSpec.FEATURE_MULTIRECIPIENTS
+		// | SubConnectorSpec.FEATURE_CUSTOMSENDER
+		// | SubConnectorSpec.FEATURE_SENDLATER);
 		return c;
 	}
 
@@ -119,27 +138,8 @@ public class ConnectorMyphone extends Connector {
 		return connectorSpec;
 	}
 
-	// /**
-	// * {@inheritDoc}
-	// */
-	// @Override
-	// protected final void doBootstrap(final Context context, final Intent
-	// intent)
-	// throws WebSMSException {
-	// // TODO: bootstrap settings.
-	// // If you don't need to bootstrap any config, remove this method.
-	// Log.i(TAG, "bootstrap");
-	// if (1 != 1) {
-	// // If something fails, you should abort this method
-	// // by throwing a WebSMSException.
-	// throw new WebSMSException("message to user.");
-	// }
-	// // The surrounding code will assume positive result of this method,
-	// // if no WebSMSException was thrown.
-	// }
-
 	/**
-	 * This post data is needed for log in.
+	 * b This post data is needed for log in.
 	 * 
 	 * @param username
 	 *            username
@@ -156,10 +156,64 @@ public class ConnectorMyphone extends Connector {
 		sb.append(URLEncoder.encode(username, ENCODING));
 		sb.append("&pass=");
 		sb.append(URLEncoder.encode(password, ENCODING));
-		// sb
-		// .append("&login=Login&protocol="
-		// + "https&info=Online-Passwort&goto=");
 		return sb.toString();
+	}
+
+	/**
+	 * These post data is needed for sending a sms.
+	 * 
+	 * @param ctx
+	 *            {@link ConnectorContext}
+	 * @return array of params
+	 * @throws Exception
+	 *             if an error occures.
+	 */
+	private String getSmsPost(final ConnectorContext ctx) throws Exception {
+		final SharedPreferences p = ctx.getPreferences();
+		final StringBuilder sb = new StringBuilder();
+		final String[] to = ctx.getCommand().getRecipients();
+		for (final String r : to) {
+			sb.append(Utils.getRecipientsNumber(r)).append(",");
+		}
+		// data: {
+		// rcpt: this.target,
+		// sender: sender,
+		// sendernum: $pick(sendernum, ''),
+		// message: text,
+		// schedule: (this.options.schedule || ''),
+		// parentid: (parentid || ''),
+		// parenttype: (parenttype || ''),
+		// eventtype: (eventtype || ''),
+		// send: true
+		// },
+
+		final StringBuilder sb1 = new StringBuilder();
+		sb1.append("rcpt=");
+		// 
+		sb1.append(URLEncoder.encode(sb.toString(), PAGE_ENCODING));
+
+		String sender = Utils.getSender(ctx.getContext(), ctx.getCommand()
+				.getDefSender());
+		sender = URLEncoder.encode(sender, PAGE_ENCODING);
+		sb1.append("&sender=");
+		sb1.append("&sendernum=").append(sender);
+		sb1.append("&message=");
+		sb1
+				.append(URLEncoder.encode(ctx.getCommand().getText(),
+						PAGE_ENCODING));
+		final long sendLater = ctx.getCommand().getSendLater();
+		sb1.append("&schedule=");
+		if (sendLater > 0) {
+			final String late = format.format(new Date(sender));
+			sb1.append(URLDecoder.decode(late, PAGE_ENCODING));
+		}
+		sb1.append("&parentid=");
+		sb1.append("&parenttype=");
+		sb1.append("&eventtype=");
+		sb1.append("&send=true");
+		final String post = sb1.toString();
+		Log.d(TAG, "request: " + post);
+		return post;
 	}
 
 	/**
@@ -220,32 +274,92 @@ public class ConnectorMyphone extends Connector {
 	@Override
 	protected final void doUpdate(final Context context, final Intent intent)
 			throws WebSMSException {
-		// Log.i(TAG, "update");
 		final ConnectorContext ctx = ConnectorContext.create(context, intent);
 		this.login(ctx);
-		// this.updateBalance(ctx);
-		// }
 	}
 
 	/**
-	 * Updates balance andl pushes it to WebSMS.
+	 * Sends an sms via HTTP POST.
 	 * 
 	 * @param ctx
 	 *            {@link ConnectorContext}
+	 * @return successfull?
 	 * @throws WebSMSException
 	 *             on an error
 	 */
-	private void updateBalance(final ConnectorContext ctx)
-			throws WebSMSException {
+	private boolean sendSms(final ConnectorContext ctx) throws WebSMSException {
 		try {
 			final HttpResponse response = ctx.getClient().execute(
-					new HttpGet(SMS_URL));
-			this.notifyFreeCount(ctx, Utils.stream2str(response.getEntity()
-					.getContent()));
-
+					createPOST(SMS_URL, this.getSmsPost(ctx)));
+			final boolean sent = this.afterSmsSent(ctx, response);
+			if (sent) {
+				notifyBalance(ctx, ctx.getClient());
+			}
+			return sent;
 		} catch (final Exception ex) {
 			throw new WebSMSException(ex.getMessage());
 		}
+	}
+
+	private void notifyBalance(final ConnectorContext ctx,
+			final DefaultHttpClient client) {
+		try {
+			final HttpResponse respone = client
+					.execute(new HttpGet(BALANCE_URL));
+			if (respone.getStatusLine().getStatusCode() != 200) {
+				Log.w(TAG, "notifyBalance: " + respone.getStatusLine());
+				return;
+			}
+			final JSONObject jo = new JSONObject(Utils.stream2str(respone
+					.getEntity().getContent()));
+			final String balance = jo.getString("balance");
+			this.getSpec(ctx.getContext()).setBalance(balance);
+
+		} catch (final Exception ex) {
+			Log.w(TAG, "notifyBalance: " + ex.getMessage());
+		}
+	}
+
+	/**
+	 * Handles content after sms sending.
+	 * 
+	 * @param ctx
+	 *            {@link ConnectorContext}
+	 * @param response
+	 *            HTTP Response
+	 * @return true if arcor returns success
+	 * @throws Exception
+	 *             if an Error occures
+	 */
+	private boolean afterSmsSent(final ConnectorContext ctx,
+			final HttpResponse response) throws Exception {
+
+		final String body = Utils.stream2str(response.getEntity().getContent());
+
+		Log.d(TAG, "response: " + body);
+
+		if (body == null || body.length() == 0) {
+			throw new WebSMSException("response.empty");// TODO
+		}
+
+		JSONObject jo = null;
+		try {
+			jo = new JSONObject(body);
+		} catch (final JSONException e) {
+			throw new WebSMSException("respone.nojson");
+		}
+
+		if (jo.has("result")) {
+			jo = jo.getJSONObject("result");
+		}
+		final int faultCode = jo.getInt("faultCode");
+
+		final String faultString = jo.getString("faultString");
+
+		if (faultCode != 200) {
+			throw new WebSMSException(faultString);
+		}
+		return true;
 	}
 
 	/**
@@ -261,11 +375,7 @@ public class ConnectorMyphone extends Connector {
 		final Matcher m = BALANCE_MATCH_PATTERN.matcher(content);
 		String term = null;
 		if (m.find()) {
-			term = m.group(1) + " GEL";
-			// } else if (content.contains(MATCH_NO_SMS)) {
-			// term = "0+0";
-			// } else if (content.contains(MATCH_UNLIMITTED_SMS)) {
-			// term = "\u221E";
+			term = m.group(1) + "l";
 		} else {
 			Log.w(TAG, content);
 			term = "?";
@@ -279,10 +389,10 @@ public class ConnectorMyphone extends Connector {
 	@Override
 	protected final void doSend(final Context context, final Intent intent)
 			throws WebSMSException {
-		// TODO: send a message provided by intent
-		// Log.i(TAG, "send with sender "
-		// + Utils.getSender(context, new ConnectorCommand(intent)
-		// .getDefSender()));
-		// See doBootstrap() for more details.
+		final ConnectorContext ctx = ConnectorContext.create(context, intent);
+		if (this.login(ctx)) {
+			this.sendSms(ctx);
+		}
+
 	}
 }
