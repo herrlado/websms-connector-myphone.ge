@@ -17,10 +17,13 @@
 		not, see <http://www.gnu.org/licenses/>.
 	-->
 <resources>
-	<string name="app_name">WebSMS Connector: myphone.ge</string>
+	<string name="app_name">WebSMS - myphone.ge</string>
 	<string name="app_version">1.0</string>
+	<string name="myphone.ge_hint">Neuen myphone.ge Account anlegen</string>
+	<string name="myphone.ge_url">http://www.myphone.ge/site_register.php?act=register</string>
 	<string name="myphone_author">Lado Kumsiashvili &lt;herrlado@gmail.com&gt;</string>
 	<string name="myphone_name">myphone.ge</string>
 	<string name="preferences">Einstellungen - myphone.ge</string>
 	<string name="enable">Aktiviere myphone.ge</string>
+	<string name="log_unknow_status_after_send">Die Nachricht wurde wahrscheinlich nicht verschickt. Bitte Entwickler kontaktieren!</string>
 </resources>

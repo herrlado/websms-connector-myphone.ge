@@ -17,8 +17,10 @@
 		not, see <http://www.gnu.org/licenses/>.
 	-->
 <resources>
-	<string name="app_name">WebSMS myphone.ge Connector</string>
+	<string name="app_name">WebSMS - myphone.ge</string>
 	<string name="app_version">1.0</string>
+	<string name="myphone.ge_hint">Create new myphone.ge account</string>
+	<string name="myphone.ge_url">http://www.myphone.ge/site_register.php?act=register</string>
 	<string name="myphone_author">Lado Kumsiashvili &lt;herrlado@gmail.com&gt;</string>
 	<string name="myphone_name">myphone.ge</string>
 	<string name="preferences">Preferences - myphone.ge</string>
