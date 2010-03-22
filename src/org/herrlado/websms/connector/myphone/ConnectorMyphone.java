@@ -107,14 +107,6 @@ public class ConnectorMyphone extends Connector {
 				SubConnectorSpec.FEATURE_CUSTOMSENDER);
 		// | SubConnectorSpec.FEATURE_SENDLATER);//TODO fix me
 		// | SubConnectorSpec.FEATURE_SENDLATER_QUARTERS);
-
-		// c.setCapabilities(ConnectorSpec.CAPABILITIES_UPDATE
-		// | ConnectorSpec.CAPABILITIES_SEND
-		// | ConnectorSpec.CAPABILITIES_PREFS);
-		// c.addSubConnector(TAG, c.getName(),
-		// SubConnectorSpec.FEATURE_MULTIRECIPIENTS
-		// | SubConnectorSpec.FEATURE_CUSTOMSENDER
-		// | SubConnectorSpec.FEATURE_SENDLATER);
 		return c;
 	}
 
