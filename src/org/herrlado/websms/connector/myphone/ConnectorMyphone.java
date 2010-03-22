@@ -164,8 +164,13 @@ public class ConnectorMyphone extends Connector {
 		final SharedPreferences p = ctx.getPreferences();
 		final StringBuilder sb = new StringBuilder();
 		final String[] to = ctx.getCommand().getRecipients();
-		for (final String r : to) {
-			sb.append(Utils.getRecipientsNumber(r)).append(",");
+		String delimiter = ",";
+		for (int i = 0; i < to.length; ++i) {
+			if (i == to.length - 1) {
+				delimiter = "";
+			}
+			sb.append(Utils.getRecipientsNumber(to[i])).append(delimiter);
+
 		}
 		// data: {
 		// rcpt: this.target,

@@ -17,9 +17,9 @@
 		not, see <http://www.gnu.org/licenses/>.
 	-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionCode="000" android:versionName="" package="org.herrlado.websms.connector.myphone">
+	android:versionCode="12" android:versionName="1.2" package="org.herrlado.websms.connector.myphone">
 	<application android:label="@string/app_name" android:icon="@drawable/icon"
-		android:debuggable="true">
+		android:debuggable="false">
  
 		<!--
 			This Activity is brought by the WebSMS Connector Plugin API. It shows
