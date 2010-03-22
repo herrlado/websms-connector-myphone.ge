@@ -12,8 +12,7 @@ public final class R {
     }
     public static final class drawable {
         public static final int icon=0x7f020000;
-        public static final int myphone=0x7f020001;
-        public static final int stat_notify_sms_pending=0x7f020002;
+        public static final int stat_notify_sms_pending=0x7f020001;
     }
     public static final class string {
         public static final int app_name=0x7f040000;

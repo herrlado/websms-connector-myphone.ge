@@ -18,7 +18,7 @@
 	-->
 <resources>
 	<string name="app_name">WebSMS - myphone.ge</string>
-	<string name="app_version">1.0</string>
+	<string name="app_version">1.1</string>
 	<string name="myphone.ge_hint">Neuen myphone.ge Account anlegen</string>
 	<string name="myphone.ge_url">http://www.myphone.ge/site_register.php?act=register</string>
 	<string name="myphone_author">Lado Kumsiashvili &lt;herrlado@gmail.com&gt;</string>
