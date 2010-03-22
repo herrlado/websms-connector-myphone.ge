@@ -64,4 +64,12 @@
     -->
     <setup />
 
+
+
+    <property environment="env"/>
+    <target name="preprocess" if="env.BUILD_TAG">
+      <echo>Removing debug attribute from AndroidManifest.xml</echo>
+      <replaceregexp file="AndroidManifest.xml" match="android:debuggable=&quot;.*?&quot;" replace=""/>
+    </target>
+
 </project>
