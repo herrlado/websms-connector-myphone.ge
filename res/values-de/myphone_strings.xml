@@ -25,5 +25,7 @@
 	<string name="myphone_name">myphone.ge</string>
 	<string name="preferences">Einstellungen - myphone.ge</string>
 	<string name="enable">Aktiviere myphone.ge</string>
+	<string name="show_sms_count">Guthaben als SMS Anzahl</string>
+	<string name="show_sms_count_hint">Zeigt die Anzahl der restlichen SMSe, anstatt des Restguthabens</string>
 	<string name="log_unknow_status_after_send">Die Nachricht wurde wahrscheinlich nicht verschickt. Bitte Entwickler kontaktieren!</string>
 </resources>

@@ -42,6 +42,12 @@
 		android:dialogTitle="@string/custom_sender_" android:summary="@string/sender_hint"
 		android:dependency="use_default_sender" />
 		
+	<CheckBoxPreference android:key="show_sms_amount"
+		android:defaultValue="false" android:title="@string/show_sms_amount"
+		android:summary="@string/show_sms_amount_hint"
+		android:disableDependentsState="true" android:dependency="enable" />
+	
+		
 	<PreferenceScreen android:title="@string/create_account_"
 		android:summary="@string/myphone.ge_hint">
 		<intent android:action="android.intent.action.VIEW"

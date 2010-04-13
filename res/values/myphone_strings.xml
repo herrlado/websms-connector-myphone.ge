@@ -25,5 +25,7 @@
 	<string name="myphone_name">myphone.ge</string>
 	<string name="preferences">Preferences - myphone.ge</string>
 	<string name="enable">Enable myphone.ge</string>
+	<string name="show_sms_amount">Show free sms amount</string>
+	<string name="show_sms_amount_hint">Show sms amount, rather than amount of money.</string>
 	<string name="log_unknow_status_after_send">The Message was probably not be sent. Please contact the Developer!</string>
 </resources>

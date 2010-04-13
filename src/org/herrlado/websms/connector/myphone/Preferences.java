@@ -31,6 +31,7 @@ public final class Preferences extends PreferenceActivity {
 	static final String ENABLED = "enable";
 	static final String USERNAME = "username";
 	static final String PASSWORD = "password";
+	static final String SHOW_SMS_AMOUNT = "show_sms_amount";
 
 	/**
 	 * {@inheritDoc}

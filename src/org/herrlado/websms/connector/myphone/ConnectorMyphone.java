@@ -19,10 +19,9 @@
 package org.herrlado.websms.connector.myphone;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,8 +84,12 @@ public class ConnectorMyphone extends Connector {
 
 	private static final String PAGE_ENCODING = "UTF-8";
 	// 16.03.2010 07:10:00
-	private static final SimpleDateFormat format = new SimpleDateFormat(
-			"dd.MM.yyyy HH:mm:ss");
+	private static final ThreadLocal<SimpleDateFormat> format = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+		};
+	};
 
 	/**
 	 * {@inheritDoc}
@@ -104,9 +107,8 @@ public class ConnectorMyphone extends Connector {
 				| ConnectorSpec.CAPABILITIES_SEND
 				| ConnectorSpec.CAPABILITIES_PREFS);
 		c.addSubConnector(TAG, c.getName(),
-				SubConnectorSpec.FEATURE_CUSTOMSENDER);
-		// | SubConnectorSpec.FEATURE_SENDLATER);//TODO fix me
-		// | SubConnectorSpec.FEATURE_SENDLATER_QUARTERS);
+				SubConnectorSpec.FEATURE_CUSTOMSENDER
+						| SubConnectorSpec.FEATURE_SENDLATER);
 		return c;
 	}
 
@@ -201,8 +203,11 @@ public class ConnectorMyphone extends Connector {
 		final long sendLater = ctx.getCommand().getSendLater();
 		sb1.append("&schedule=");
 		if (sendLater > 0) {
-			final String late = format.format(new Date(sender));
-			sb1.append(URLDecoder.decode(late, PAGE_ENCODING));
+			final Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(sendLater);
+			cal.set(Calendar.SECOND, 0);
+			final String late = format.get().format(cal.getTime());
+			sb1.append(URLEncoder.encode(late, PAGE_ENCODING));
 		}
 		sb1.append("&parentid=");
 		sb1.append("&parenttype=");
@@ -310,10 +315,32 @@ public class ConnectorMyphone extends Connector {
 			final JSONObject jo = new JSONObject(Utils.stream2str(respone
 					.getEntity().getContent()));
 			final String balance = jo.getString("balance");
-			this.getSpec(ctx.getContext()).setBalance(balance);
+			this.getSpec(ctx.getContext())
+					.setBalance(balance2sms(balance, ctx));
 
 		} catch (final Exception ex) {
 			Log.w(TAG, "notifyBalance: " + ex.getMessage());
+		}
+	}
+
+	/**
+	 * If the option show_sms_amount == true, balance ist divided through 0.06
+	 * otherwise l is attached (for lari) als suffix
+	 * 
+	 * @param balance
+	 * @param ctx
+	 * @return
+	 */
+	private static String balance2sms(final String balance,
+			final ConnectorContext ctx) {
+		if (ctx.getPreferences().getBoolean(Preferences.SHOW_SMS_AMOUNT, false) == false) {
+			return balance + "l";
+		}
+		try {
+			return "" + (int) (Double.valueOf(balance) / 0.06f);
+		} catch (final NumberFormatException nfe) {
+			Log.w(TAG, "Can not parse amount");
+			return balance + "l";
 		}
 	}
 
@@ -372,7 +399,8 @@ public class ConnectorMyphone extends Connector {
 		final Matcher m = BALANCE_MATCH_PATTERN.matcher(content);
 		String term = null;
 		if (m.find()) {
-			term = m.group(1) + "l";
+			term = m.group(1);
+			term = balance2sms(term, ctx);
 		} else {
 			Log.w(TAG, content);
 			term = "?";
