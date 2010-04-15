@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
@@ -241,7 +240,7 @@ public class ConnectorMyphone extends Connector {
 				throw new WebSMSException(ctx.getContext(), R.string.error_pw);
 			}
 
-			notifyFreeCount(ctx, cutContent);
+			notifyBalance(ctx, ctx.getClient());
 
 		} catch (final Exception e) {
 			throw new WebSMSException(e.getMessage());
@@ -320,6 +319,7 @@ public class ConnectorMyphone extends Connector {
 
 		} catch (final Exception ex) {
 			Log.w(TAG, "notifyBalance: " + ex.getMessage());
+			this.getSpec(ctx.getContext()).setBalance("?");
 		}
 	}
 
@@ -394,19 +394,20 @@ public class ConnectorMyphone extends Connector {
 	 * @param content
 	 *            conten to investigate.
 	 */
-	private void notifyFreeCount(final ConnectorContext ctx,
-			final String content) {
-		final Matcher m = BALANCE_MATCH_PATTERN.matcher(content);
-		String term = null;
-		if (m.find()) {
-			term = m.group(1);
-			term = balance2sms(term, ctx);
-		} else {
-			Log.w(TAG, content);
-			term = "?";
-		}
-		this.getSpec(ctx.getContext()).setBalance(term);
-	}
+	// private void notifyFreeCount(final ConnectorContext ctx,
+	// final String content) {
+	// final Matcher m = BALANCE_MATCH_PATTERN.matcher(content);
+	// String term = null;
+	// if (m.find()) {
+	// term = m.group(1);
+	// term = balance2sms(term, ctx);
+	// } else {
+	//	
+	// Log.w(TAG, content);
+	// term = "?";
+	// }
+	// this.getSpec(ctx.getContext()).setBalance(term);
+	// }
 
 	/**
 	 * {@inheritDoc}
