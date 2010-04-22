@@ -17,43 +17,41 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int app_version=0x7f040001;
-        public static final int create_account_=0x7f04001f;
-        public static final int custom_sender_=0x7f040022;
+        public static final int create_account_=0x7f04001d;
+        public static final int custom_sender_=0x7f040020;
         public static final int enable=0x7f040007;
-        public static final int error=0x7f040011;
-        public static final int error_http=0x7f040012;
-        public static final int error_http_header_missing=0x7f04001b;
-        public static final int error_input=0x7f04001a;
-        public static final int error_mail=0x7f040013;
-        public static final int error_pw=0x7f040014;
-        public static final int error_sender=0x7f040015;
-        public static final int error_sender_unregistered=0x7f040016;
-        public static final int error_sendlater_quater=0x7f04001c;
-        public static final int error_server=0x7f040017;
-        public static final int error_service=0x7f040018;
-        public static final int error_wrongcaptcha=0x7f040019;
+        public static final int error=0x7f04000f;
+        public static final int error_http=0x7f040010;
+        public static final int error_http_header_missing=0x7f040019;
+        public static final int error_input=0x7f040018;
+        public static final int error_mail=0x7f040011;
+        public static final int error_pw=0x7f040012;
+        public static final int error_sender=0x7f040013;
+        public static final int error_sender_unregistered=0x7f040014;
+        public static final int error_sendlater_quater=0x7f04001a;
+        public static final int error_server=0x7f040015;
+        public static final int error_service=0x7f040016;
+        public static final int error_wrongcaptcha=0x7f040017;
         /**  Common strings. 
  Common strings. 
          */
-        public static final int info_text=0x7f04000d;
+        public static final int info_text=0x7f04000b;
         public static final int log_unknow_status_after_send=0x7f04000a;
         public static final int myphone_ge_hint=0x7f040002;
         public static final int myphone_ge_url=0x7f040003;
         public static final int myphone_author=0x7f040004;
         public static final int myphone_name=0x7f040005;
-        public static final int password_=0x7f04001e;
+        public static final int password_=0x7f04001c;
         public static final int preferences=0x7f040006;
-        public static final int sender_hint=0x7f040023;
+        public static final int sender_hint=0x7f040021;
         public static final int show_sms_amount=0x7f040008;
         public static final int show_sms_amount_hint=0x7f040009;
-        public static final int show_sms_count=0x7f04000b;
-        public static final int show_sms_count_hint=0x7f04000c;
-        public static final int stat_notify_IO=0x7f040010;
-        public static final int stat_notify_sending=0x7f04000f;
-        public static final int stat_notify_sms_pending=0x7f04000e;
-        public static final int use_derfault_sender_=0x7f040020;
-        public static final int use_derfault_sender_hint=0x7f040021;
-        public static final int username_=0x7f04001d;
+        public static final int stat_notify_IO=0x7f04000e;
+        public static final int stat_notify_sending=0x7f04000d;
+        public static final int stat_notify_sms_pending=0x7f04000c;
+        public static final int use_derfault_sender_=0x7f04001e;
+        public static final int use_derfault_sender_hint=0x7f04001f;
+        public static final int username_=0x7f04001b;
     }
     public static final class xml {
         public static final int prefs=0x7f030000;
