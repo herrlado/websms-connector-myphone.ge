@@ -96,16 +96,14 @@ public class ConnectorMyphone extends Connector {
 	@Override
 	public final ConnectorSpec initSpec(final Context context) {
 		final String name = context.getString(R.string.myphone_name);
-		final ConnectorSpec c = new ConnectorSpec(TAG, name);
+		final ConnectorSpec c = new ConnectorSpec(name);
 		c.setAuthor(// .
 				context.getString(R.string.myphone_author));
 		c.setBalance(null);
-		c.setPrefsTitle(context.getString(R.string.preferences));
-
 		c.setCapabilities(ConnectorSpec.CAPABILITIES_UPDATE
 				| ConnectorSpec.CAPABILITIES_SEND
 				| ConnectorSpec.CAPABILITIES_PREFS);
-		c.addSubConnector(TAG, c.getName(),
+		c.addSubConnector("myphone.ge", c.getName(),
 				SubConnectorSpec.FEATURE_CUSTOMSENDER
 						| SubConnectorSpec.FEATURE_SENDLATER);
 		return c;
