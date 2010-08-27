@@ -34,6 +34,7 @@ public final class R {
         public static final int error_wrongcaptcha=0x7f040017;
         /**  Common strings. 
  Common strings. 
+ Common strings. 
          */
         public static final int info_text=0x7f04000b;
         public static final int log_unknow_status_after_send=0x7f04000a;
