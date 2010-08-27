@@ -65,7 +65,7 @@ public class ConnectorMyphone extends Connector {
 	private static final String BALANCE_URL = "https://myaccount.myphone.ge/ajax/account/getbalance.php";
 
 	/** Encoding to use. */
-	private static final String ENCODING = "UTF-8";
+	private static final String ENCODING = "ISO-8859-1";
 
 	/** HTTP Header User-Agent. */
 	private static final String FAKE_USER_AGENT = "Mozilla/5.0 (Windows; U;"
@@ -168,7 +168,13 @@ public class ConnectorMyphone extends Connector {
 			if (i == to.length - 1) {
 				delimiter = "";
 			}
-			sb.append(Utils.getRecipientsNumber(to[i])).append(delimiter);
+			
+			String rn = Utils.getRecipientsNumber(to[i]);
+			if(!rn.startsWith("8")){
+			    rn = Utils.national2international(ctx.command.getDefPrefix(),
+                        Utils.getRecipientsNumber(rn));
+			}
+			sb.append(rn).append(delimiter);
 
 		}
 		// data: {
