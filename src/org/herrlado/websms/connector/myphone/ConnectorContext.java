@@ -72,6 +72,19 @@ public class ConnectorContext {
 		this.context = context;
 		this.intent = intent;
 		this.command = new ConnectorCommand(this.intent);
+//		
+//	
+//
+//	        HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+//
+//	        DefaultHttpClient client = new DefaultHttpClient();
+//
+//	        SchemeRegistry registry = new SchemeRegistry();
+//	        SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
+//	        socketFactory.setHostnameVerifier((X509HostnameVerifier) hostnameVerifier);
+//	        registry.register(new Scheme("https", socketFactory, 443));
+//	        SingleClientConnManager mgr = new SingleClientConnManager(client.getParams(), registry);
+	        //this.client = new DefaultHttpClient(mgr, client.getParams());
 		this.client = new DefaultHttpClient();
 
 	}

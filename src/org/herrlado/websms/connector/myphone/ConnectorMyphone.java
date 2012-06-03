@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2010 Felix Bechstein
+ * Copyright (C) 2010 Lado Kumsiashvili
  * 
- * This file is part of WebSMS.
+ * This file is part of websms-connector myphone.ge
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -42,9 +41,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import de.ub0r.android.websms.connector.common.Connector;
 import de.ub0r.android.websms.connector.common.ConnectorSpec;
+import de.ub0r.android.websms.connector.common.ConnectorSpec.SubConnectorSpec;
 import de.ub0r.android.websms.connector.common.Utils;
 import de.ub0r.android.websms.connector.common.WebSMSException;
-import de.ub0r.android.websms.connector.common.ConnectorSpec.SubConnectorSpec;
 
 /**
  * Receives commands coming as broadcast from WebSMS.
@@ -65,7 +64,7 @@ public class ConnectorMyphone extends Connector {
 	private static final String BALANCE_URL = "https://myaccount.myphone.ge/ajax/account/getbalance.php";
 
 	/** Encoding to use. */
-	private static final String ENCODING = "ISO-8859-1";
+	//private static final String ENCODING = "ISO-8859-1";
 
 	/** HTTP Header User-Agent. */
 	private static final String FAKE_USER_AGENT = "Mozilla/5.0 (Windows; U;"
@@ -78,8 +77,8 @@ public class ConnectorMyphone extends Connector {
 	/**
 	 * Pattern to extract free sms count from sms page. Looks like.
 	 */
-	private static final Pattern BALANCE_MATCH_PATTERN = Pattern.compile(
-			"<span id=\"balance\">(.+?)</span>", Pattern.DOTALL);
+//	private static final Pattern BALANCE_MATCH_PATTERN = Pattern.compile(
+//			"<span id=\"balance\">(.+?)</span>", Pattern.DOTALL);
 
 	private static final String PAGE_ENCODING = "UTF-8";
 	// 16.03.2010 07:10:00
@@ -144,9 +143,9 @@ public class ConnectorMyphone extends Connector {
 			final String password) throws UnsupportedEncodingException {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("user=");
-		sb.append(URLEncoder.encode(username, ENCODING));
+		sb.append(URLEncoder.encode(username, PAGE_ENCODING));
 		sb.append("&pass=");
-		sb.append(URLEncoder.encode(password, ENCODING));
+		sb.append(URLEncoder.encode(password, PAGE_ENCODING));
 		return sb.toString();
 	}
 
@@ -160,7 +159,6 @@ public class ConnectorMyphone extends Connector {
 	 *             if an error occures.
 	 */
 	private String getSmsPost(final ConnectorContext ctx) throws Exception {
-		final SharedPreferences p = ctx.getPreferences();
 		final StringBuilder sb = new StringBuilder();
 		final String[] to = ctx.getCommand().getRecipients();
 		String delimiter = ",";
