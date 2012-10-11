@@ -67,9 +67,7 @@ public class ConnectorMyphone extends Connector {
 	//private static final String ENCODING = "ISO-8859-1";
 
 	/** HTTP Header User-Agent. */
-	private static final String FAKE_USER_AGENT = "Mozilla/5.0 (Windows; U;"
-			+ " Windows NT 5.1; de; rv:1.9.0.9) Gecko/2009040821"
-			+ " Firefox/3.0.9 (.NET CLR 3.5.30729)";
+	private static final String FAKE_USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:13.0) Gecko/20100101 Firefox/13.0.1";
 
 	/** This String will be matched if the user is logged in. */
 	private static final String MATCH_LOGIN_SUCCESS = "control_panel_logout";
@@ -144,8 +142,9 @@ public class ConnectorMyphone extends Connector {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("user=");
 		sb.append(URLEncoder.encode(username, PAGE_ENCODING));
-		sb.append("&pass=");
-		sb.append(URLEncoder.encode(password, PAGE_ENCODING));
+		sb.append("&pass=").append(URLEncoder.encode(password, PAGE_ENCODING));
+		sb.append("&redirect=").append("/");
+		sb.append("&login=").append(URLEncoder.encode("/შესვლა", PAGE_ENCODING));
 		return sb.toString();
 	}
 
@@ -235,6 +234,7 @@ public class ConnectorMyphone extends Connector {
 			final HttpPost request = createPOST(LOGIN_URL, getLoginPost(p
 					.getString(Preferences.USERNAME, ""), p.getString(
 					Preferences.PASSWORD, "")));
+			request.setHeader("Referer", "https://myaccount.myphone.ge/auth/login/?redirect=/&lang=");
 			final HttpResponse response = ctx.getClient().execute(request);
 			final String cutContent = Utils.stream2str(response.getEntity()
 					.getContent());

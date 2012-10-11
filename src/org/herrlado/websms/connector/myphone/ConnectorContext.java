@@ -86,6 +86,30 @@ public class ConnectorContext {
 //	        SingleClientConnManager mgr = new SingleClientConnManager(client.getParams(), registry);
 	        //this.client = new DefaultHttpClient(mgr, client.getParams());
 		this.client = new DefaultHttpClient();
+//		this.client.setCookieStore(new CookieStore() {
+//			
+//			Map<String, Cookie> cookies = new HashMap<String, Cookie>();
+//			
+//			@Override
+//			public List<Cookie> getCookies() {
+//				return new ArrayList<Cookie>(cookies.values());
+//			}
+//			
+//			@Override
+//			public boolean clearExpired(Date date) {
+//				return false;
+//			}
+//			
+//			@Override
+//			public void clear() {
+//				cookies.clear();
+//			}
+//			
+//			@Override
+//			public void addCookie(Cookie cookie) {
+//				cookies.put(cookie.getName(), cookie);
+//			}
+//		});
 
 	}
 
